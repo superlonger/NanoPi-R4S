@@ -58,7 +58,9 @@ jobs:
     - name: Clone Source Code
       run: |
         df -hT $PWD
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        git config --global user.email "git@github.com"
+        git config --global user.name "GitHub"
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Update Feeds
       id: update
@@ -255,8 +257,10 @@ jobs:
       - name: Build & Push Docker Image To Dockerhub
         run: |
           cd openwrt/bin/targets/$TARGET/$SUBTARGET/
-          docker import $DEVICE-rootfs.tar.gz ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:latest
+          docker import openwrt-rockchip-armv8-friendlyarm_nanopi-r4s-4gb-rootfs.tar.gz ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:lean-4gb
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:lean-4gb
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:lean-4gb ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:latest
 
       - name: Delete workflow runs
