@@ -6,19 +6,6 @@
 # Blog: https://p3terx.com
 #=================================================
 
-# Modify default IP
-sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
-
-git apply $GITHUB_WORKSPACE/patches/official/*.patch
-cat $GITHUB_WORKSPACE/patches/kernel/kernel_mods.txt >> target/linux/rockchip/armv8/config-5.4
-echo -e "\n Official OpenWrt built by LewiVir on "$(date +%Y.%m.%d)"\n -----------------------------------------------------\c" >> package/base-files/files/etc/banner
-
-
-# Add luci-app-vssr <M>
-git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
-git clone --depth=1 https://github.com/jerrykuku/luci-app-vssr
-
-
 # Clone Lean's latest sources.
 pushd package
 git clone --depth=1 https://github.com/coolsnowwolf/lede
@@ -160,3 +147,22 @@ chmod +x ./convert-translation.sh
 cp ../scripts/remove-upx.sh .
 chmod +x ./remove-upx.sh
 ./remove-upx.sh || true
+
+
+# LewiVir's configs
+# Modify default IP
+sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
+
+git apply $GITHUB_WORKSPACE/patches/official/*.patch
+cat $GITHUB_WORKSPACE/patches/kernel/kernel_mods.txt >> target/linux/rockchip/armv8/config-5.4
+echo -e " Official OpenWrt built by LewiVir on "$(date +%Y.%m.%d)"\n -----------------------------------------------------" >> package/base-files/files/etc/banner
+
+# Add luci-app-vssr <M>
+git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb.git
+git clone --depth=1 https://github.com/jerrykuku/luci-app-vssr
+
+pushd package/lean
+# Add Project OpenWrt's autocore
+rm -rf autocore
+svn co https://github.com/1715173329/openwrt/branches/1806-k54-nanopi-r4s/package/lean/autocore
+popd

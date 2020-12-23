@@ -6,14 +6,6 @@
 # Blog: https://p3terx.com
 #=================================================
 
-# Modify default IP
-sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
-
-git apply $GITHUB_WORKSPACE/patches/lean/*.patch
-cat $GITHUB_WORKSPACE/patches/kernel/kernel_mods.txt >> target/linux/rockchip/armv8/config-5.4
-echo -e "\n Lean's OpenWrt built by LewiVir on "$(date +%Y.%m.%d)"\n -----------------------------------------------------\c" >> package/base-files/files/etc/banner
-
-
 # Add luci-app-ssr-plus
 pushd package/lean
 git clone --depth=1 https://github.com/fw876/helloworld
@@ -135,3 +127,18 @@ popd
 
 # Change default shell to zsh
 sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
+
+
+# LewiVir's configs
+# Modify default IP
+sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
+
+git apply $GITHUB_WORKSPACE/patches/lean/*.patch
+cat $GITHUB_WORKSPACE/patches/kernel/kernel_mods.txt >> target/linux/rockchip/armv8/config-5.4
+echo -e " Lean's OpenWrt built by LewiVir on "$(date +%Y.%m.%d)"\n -----------------------------------------------------" >> package/base-files/files/etc/banner
+
+pushd package/lean
+# Add Project OpenWrt's autocore
+rm -rf autocore
+svn co https://github.com/1715173329/openwrt/branches/1806-k54-nanopi-r4s/package/lean/autocore
+popd
